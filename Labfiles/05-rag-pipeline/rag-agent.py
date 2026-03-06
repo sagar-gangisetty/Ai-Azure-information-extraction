@@ -15,8 +15,8 @@ def main():
     try:
         # Get config settings
         load_dotenv()
-        openai_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
-        openai_key = os.getenv('AZURE_OPENAI_KEY')
+        foundry_endpoint = os.getenv('FOUNDRY_ENDPOINT')
+        foundry_key = os.getenv('FOUNDRY_KEY')
         chat_deployment = os.getenv('AZURE_OPENAI_CHAT_DEPLOYMENT_NAME')
         embedding_deployment = os.getenv('AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME')
         search_endpoint = os.getenv('AZURE_SEARCH_ENDPOINT')
@@ -26,8 +26,8 @@ def main():
 
         # Create clients
         openai_client = AzureOpenAI(
-            azure_endpoint=openai_endpoint,
-            api_key=openai_key,
+            azure_endpoint=foundry_endpoint,
+            api_key=foundry_key,
             api_version="2024-06-01"
         )
 

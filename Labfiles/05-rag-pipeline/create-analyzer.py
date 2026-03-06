@@ -14,10 +14,10 @@ def main():
     try:
         # Get config settings
         load_dotenv()
-        endpoint = os.getenv('AZURE_AI_SERVICE_ENDPOINT')
-        key = os.getenv('AZURE_AI_SERVICE_KEY')
+        endpoint = os.getenv('FOUNDRY_ENDPOINT')
+        key = os.getenv('FOUNDRY_KEY')
 
-        analyzer_id = "rag-document-analyzer"
+        analyzer_id = "rag_document_analyzer"
 
         print(f"Creating analyzer '{analyzer_id}'...")
 
@@ -30,7 +30,12 @@ def main():
         # Define the analyzer schema for document extraction
         analyzer_definition = {
             "description": "Analyzer for extracting structured content from travel documents",
-            "baseAnalyzerId": "prebuilt-documentAnalyzer",
+            "baseAnalyzerId": "prebuilt-document",
+            "models": {
+                "completion": "gpt-4.1",
+                "embedding": "text-embedding-3-large"
+
+                },
             "config": {
                 "returnDetails": True
             },

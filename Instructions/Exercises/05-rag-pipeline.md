@@ -26,21 +26,32 @@ You need several Azure resources for this pipeline: a Microsoft Foundry resource
     - **Resource group**: *Create or select a resource group*
     - **Location**: Choose one of the following supported regions:\*
         - Australia East
+        - East US
+        - East US 2
+        - Japan East
+        - North Europe
+        - South Central US
+        - Southeast Asia
         - Sweden Central
+        - UK South
+        - West Europe
         - West US
+        - West US 3
 
     > \*Azure Content Understanding is available in selected regions. See the [region support documentation](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support) for the latest availability.
 
-1. Select **Create** and wait for your project to be created.
+1. Select **Create** and wait for your project to be created. This will create a project and the parent resource.
+1. Once created, select the project name at the top of the page, and select **Project details**. On that page, follow the link to the parent resource. Leave this browser tab open.
 
-### Deploy required models
+### Configure Content Understanding models and connection
 
-You need to deploy an OpenAI chat model and an embedding model.
+Content Understanding uses OpenAI models for analysis that are deployed in your project. You need to deploy these models before using analyzers, and set up the connection between Content Understanding and your Foundry resource. The easiest way is through the Content Understanding Studio.
 
-1. In your project, select **Build** in the navigation menu, then select **Models** in the left pane.
-1. Select **Deploy base model** and search for and deploy the following models, using the model name as the deployment name:
-    - **gpt-4.1** (or **gpt-4.1-mini**)
-    - **text-embedding-3-large**
+1. In a new tab, navigate to [Content Understanding Studio](https://contentunderstanding.ai.azure.com/home) at `https://contentunderstanding.ai.azure.com/home` and sign in with your credentials.
+1. Select the settings gear icon on the top navigation bar, and select **+ Add resource**.
+1. Select your subscription and resource group where you created your Foundry resource, then select your Foundry resource name from the dropdown. This resource is the parent resource to the project you previously created.
+1. Ensure the **Enable auto-deployment** box is checked, then select **Next** and **Save** to create the configuration.
+1. Wait while it deploys the required models for Content Understanding.
 
 ### Create an Azure AI Search resource
 
@@ -50,18 +61,20 @@ You need to deploy an OpenAI chat model and an embedding model.
     - **Resource group**: *The same resource group as your Microsoft Foundry resource*
     - **Service name**: *A valid unique name*
     - **Location**: *The same location as your Microsoft Foundry resource*
-    - **Pricing tier**: Basic
+    - **Pricing tier**: Free or Basic
 1. Wait for deployment to complete.
 
 ### Gather credentials
 
 You'll need the following values to configure the pipeline. Note them from the Azure portal:
 
-- **Microsoft Foundry resource endpoint**: In the Microsoft Foundry portal, select **Build** > **Connected resources**, select your Azure AI Services resource, and copy the **Endpoint** (e.g., `https://<name>.services.ai.azure.com/`).
-- **Microsoft Foundry resource API key**: From the same connected resource page, copy the **Key**.
-- **Azure OpenAI endpoint**: The same as your Microsoft Foundry resource endpoint (Azure OpenAI is included in the Foundry resource).
+- **Foundry endpoint**: From the parent resource tab you left open, copy the **Endpoint** from the **Overview** page (e.g., `https://<name>.services.ai.azure.com/`).
+- **Foundry API key**: From the same page, select **Resource Management** > **Keys and Endpoint** and copy one of the **Keys**.
 - **Azure AI Search endpoint**: From your AI Search resource's **Overview** page in the Azure portal (e.g., `https://<name>.search.windows.net`).
+- **Model deployments**: From the Foundry Home page, select **Build** > **Models** to view your deployed models. Note that there is a number at the end of your embedding model name, which you'll need to update in your `.env` file.
 - **Azure AI Search admin key**: From your AI Search resource's **Settings** > **Keys** page.
+
+    > **Note**: The Foundry endpoint and key are used for both Content Understanding and Azure OpenAI, since both services are included in the same Foundry resource.
 
 ## Prepare the development environment
 
@@ -94,12 +107,10 @@ You'll use Visual Studio Code as your development environment.
 
 1. In the VS Code Explorer pane, open the **.env** file in **Labfiles/05-rag-pipeline**.
 1. Replace the placeholder values in the `.env` file with the credentials you gathered earlier:
-    - `AZURE_AI_SERVICE_ENDPOINT` — Your Microsoft Foundry resource endpoint
-    - `AZURE_AI_SERVICE_KEY` — Your Microsoft Foundry resource API key
-    - `AZURE_OPENAI_ENDPOINT` — Your Azure OpenAI endpoint (same as Foundry endpoint)
-    - `AZURE_OPENAI_KEY` — Your API key (same as Foundry key)
+    - `FOUNDRY_ENDPOINT` — Your Microsoft Foundry resource endpoint
+    - `FOUNDRY_KEY` — Your Microsoft Foundry resource API key
     - `AZURE_OPENAI_CHAT_DEPLOYMENT_NAME` — Your chat model deployment name (e.g., `gpt-4.1`)
-    - `AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME` — Your embedding model deployment name (e.g., `text-embedding-3-large`)
+    - `AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME` — Your embedding model deployment name (e.g., `text-embedding-3-large-######`)
     - `AZURE_SEARCH_ENDPOINT` — Your Azure AI Search endpoint
     - `AZURE_SEARCH_KEY` — Your Azure AI Search admin key
 1. Save the file (**CTRL+S**).

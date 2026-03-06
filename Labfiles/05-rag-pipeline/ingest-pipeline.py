@@ -38,7 +38,7 @@ from openai import AzureOpenAI
 # ----- Configuration -------------------------------------------------------
 MANIFEST_FILE = "processed_files.json"
 INDEX_NAME = "rag-content-index"
-ANALYZER_ID = "rag-document-analyzer"
+ANALYZER_ID = "rag_document_analyzer"
 DATA_FOLDER = "data"
 POLL_INTERVAL = 30  # seconds between polls in watch mode
 # ---------------------------------------------------------------------------
@@ -191,10 +191,10 @@ def ingest_file(file_path, cu_client, openai_client, search_client,
             doc_content += item.markdown + "\n"
         if hasattr(item, "fields") and item.fields:
             for name, data in item.fields.items():
-                if hasattr(data, "value"):
+                if hasattr(data, "value_array") and data.value_array is not None:
+                    fields[name] = [v.get("value", str(v)) for v in data.value_array]
+                elif hasattr(data, "value"):
                     fields[name] = data.value
-                elif hasattr(data, "values"):
-                    fields[name] = data.values
 
     if not doc_content.strip():
         log(f"    Skipped (no extractable content).")
@@ -283,21 +283,19 @@ def main():
 
     # Load environment configuration
     load_dotenv()
-    cu_endpoint = os.getenv("AZURE_AI_SERVICE_ENDPOINT")
-    cu_key = os.getenv("AZURE_AI_SERVICE_KEY")
-    openai_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-    openai_key = os.getenv("AZURE_OPENAI_KEY")
+    foundry_endpoint = os.getenv("FOUNDRY_ENDPOINT")
+    foundry_key = os.getenv("FOUNDRY_KEY")
     embedding_deployment = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME")
     search_endpoint = os.getenv("AZURE_SEARCH_ENDPOINT")
     search_key = os.getenv("AZURE_SEARCH_KEY")
 
     # Create SDK clients
     cu_client = ContentUnderstandingClient(
-        endpoint=cu_endpoint, credential=AzureKeyCredential(cu_key),
+        endpoint=foundry_endpoint, credential=AzureKeyCredential(foundry_key),
     )
     openai_client = AzureOpenAI(
-        azure_endpoint=openai_endpoint,
-        api_key=openai_key,
+        azure_endpoint=foundry_endpoint,
+        api_key=foundry_key,
         api_version="2024-06-01",
     )
     search_client = SearchClient(
