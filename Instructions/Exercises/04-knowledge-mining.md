@@ -2,6 +2,8 @@
 lab:
     title: 'Create a knowledge mining solution'
     description: 'Use Azure AI Search to extract key information from documents and make it easier to search and analyze.'
+    level: 300
+    duration: 40
 ---
 
 # Create a knowledge mining solution

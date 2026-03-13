@@ -2,6 +2,8 @@
 lab:
     title: 'Develop a Content Understanding client application'
     description: 'Use the Azure Content Understanding Python SDK to create and use analyzers programmatically.'
+    level: 300
+    duration: 30
 ---
 
 # Develop a Content Understanding client application
