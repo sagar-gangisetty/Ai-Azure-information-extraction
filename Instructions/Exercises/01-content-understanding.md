@@ -320,7 +320,7 @@ You are going to build a custom Azure Content Understanding analyzer that can ex
     | `Participants` | `Count of meeting participants` | Integer | Generate |
     | `ParticipantNames` | `Names of meeting participants` | List of Strings | Generate |
     | `SharedSlides` | `Descriptions of any PowerPoint slides presented` | List of Strings | Generate |
-    | `AssignedActions` | `Tasks assigned to participants` | Table | Generate |
+    | `AssignedActions` | `Tasks assigned to participants` | List of Objects | Generate |
 
 1. When you enter the **AssignedActions** field, in the table of subfields, create the following subfields:
 
