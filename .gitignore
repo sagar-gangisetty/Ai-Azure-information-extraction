@@ -1,0 +1,11 @@
+# Ignore the local Python virtual environment used for labs
+labenv/
+
+# Common Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Editor files
+.vscode/
+.idea/
